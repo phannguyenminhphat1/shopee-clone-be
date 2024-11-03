@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model purchases {
+  purchase_id        Int              @id @default(autoincrement())
+  user_id            Int?
+  stores_products_id Int?
+  total_price        Decimal?         @db.Decimal(12, 2)
+  buy_count          Int?
+  status             Int?
+  created_at         DateTime?        @db.Timestamp(6)
+  updated_at         DateTime?        @db.Timestamp(6)
+  stores_products    stores_products? @relation(fields: [stores_products_id], references: [stores_products_id], onDelete: NoAction, onUpdate: NoAction)
+  users              users?           @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  shippings          shippings[]
+}
+
+model stores {
+  store_id        Int               @id @default(autoincrement())
+  store_name      String?           @db.VarChar(255)
+  address         String?
+  phone_number    String?           @db.VarChar(50)
+  created_at      DateTime?         @db.Timestamp(6)
+  updated_at      DateTime?         @db.Timestamp(6)
+  stores_products stores_products[]
+}
+
+model users {
+  user_id        Int              @id @default(autoincrement())
+  username       String?          @unique @db.VarChar(255)
+  email          String?          @unique @db.VarChar(255)
+  password       String?          @db.VarChar(255)
+  full_name      String?          @db.VarChar(255)
+  phone_number   String?          @db.VarChar(50)
+  address        String?
+  role           String?          @db.VarChar(50)
+  created_at     DateTime?        @db.Timestamp(6)
+  updated_at     DateTime?        @db.Timestamp(6)
+  avatar         String?
+  date_of_birth  DateTime?        @db.Date
+  purchases      purchases[]
+  refresh_tokens refresh_tokens[]
+}
+
+model categories {
+  category_id   Int        @id @default(autoincrement())
+  category_name String?    @unique @db.VarChar(255)
+  description   String?
+  image_url     String?
+  products      products[]
+}
+
+model products {
+  product_id      Int               @id @default(autoincrement())
+  product_name    String?           @unique @db.VarChar(255)
+  description     String?
+  category_id     Int?
+  image_url       String?           @db.VarChar(500)
+  images          String[]
+  created_at      DateTime?         @db.Timestamp(6)
+  updated_at      DateTime?         @db.Timestamp(6)
+  categories      categories?       @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction)
+  stores_products stores_products[]
+}
+
+model stores_products {
+  stores_products_id    Int         @id @default(autoincrement())
+  store_id              Int?
+  product_id            Int?
+  stock_quantity        Int?
+  rating                Decimal?    @db.Decimal(2, 1)
+  view                  Int?
+  sold                  Int?
+  price_before_discount Decimal?    @db.Decimal(12, 2)
+  price                 Decimal?    @db.Decimal(12, 2)
+  purchases             purchases[]
+  products              products?   @relation(fields: [product_id], references: [product_id], onDelete: NoAction, onUpdate: NoAction)
+  stores                stores?     @relation(fields: [store_id], references: [store_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model shippings {
+  shipping_id Int        @id @default(autoincrement())
+  purchase_id Int?
+  created_at  DateTime?  @db.Timestamp(6)
+  updated_at  DateTime?  @db.Timestamp(6)
+  purchases   purchases? @relation(fields: [purchase_id], references: [purchase_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model refresh_tokens {
+  refresh_token_id Int       @id @default(autoincrement())
+  token            String?   @db.VarChar(255)
+  user_id          Int?
+  created_at       DateTime? @db.Timestamp(6)
+  expires_at       DateTime? @db.Timestamp(6)
+  users            users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}

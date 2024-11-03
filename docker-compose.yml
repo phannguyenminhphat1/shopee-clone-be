@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  shopee-clone:
+    container_name: shopee-clone
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@61.14.233.163:5432/db_test?schema=public
+      - JWT_SECRET=MinhPhat@1234dasjdhb
+      - JWT_REFRESH_SECRET=m{Ut,5*E}G2Jr7Mv%~6Cpw
+      - CLOUNDINARY_NAME=dy2bmisbi
+      - CLOUNDINARY_API_KEY=857759662565698
+      - CLOUNDINARY_API_SECRET=nNqRkoYVntGhS0HLzjJLpT9UeHU
+      - CLOUNDINARY_DEFAULT_AVATAR=https://res.cloudinary.com/dy2bmisbi/image/upload/v1716211691/default-avatar.jpg
+    networks:
+      - node-network
+
+networks:
+  node-network:
+    external: true
