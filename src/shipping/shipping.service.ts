@@ -127,6 +127,11 @@ export class ShippingService {
               update: {
                 status: Status.Delivered,
                 updated_at: new Date(),
+                stores_products: {
+                  update: {
+                    sold: getStoresProducts.sold + shipping.purchases.buy_count,
+                  },
+                },
               },
             },
           },
